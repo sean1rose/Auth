@@ -1,9 +1,19 @@
 // route handler
 // will export a function from this file, imported by index.js file, then pass app into that function
 
+// import authentication controller
+const Authentication = require('./controllers/authentication');
+
 // to export code in node.js enviornment use module.exports
 // define routes that user can visit
 module.exports = function(app) {
+  // route handler for our signup route (POST REQUEST of username and pw to signup)
+  app.post('/signup', Authentication.signup);
+
+  
+  
+  
+  /****EXAMPLE TEST ROUTE***
   // standard syntax for route handlers...
     // expecting an http get request for index of our app, then run this function
       // 3 args: 
@@ -14,8 +24,6 @@ module.exports = function(app) {
     // just responding w/ json
       // want to respond w/ an array of strings...
     res.send(['water', 'bottle', 'phone', 'paper']);
-
   });
-
-
+  */
 }
