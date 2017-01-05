@@ -9,6 +9,7 @@ const Authentication = require('./controllers/authentication');
 module.exports = function(app) {
   // route handler for our signup route (POST REQUEST of username and pw to signup)
   app.post('/signup', Authentication.signup);
+    // ^ sending to authentication controller (which should provide a json request)
 
   
   
