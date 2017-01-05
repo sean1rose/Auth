@@ -8,10 +8,17 @@ const app = express();
 
 
 // app setup -> getting express working
+// boilerplate musthaves know rhyme or reason:
+// tell app to use morgan -> morgan is a logging framework (logs incoming requests, used for debugging)
+app.use(morgan('combined'));
+// morgan and bodyparser -> express middleware
+  // any incoming request will be passed into both 1st
+// bodyparser is used to parse incoming requests into json (no matter the request type)
+app.use(bodyParser.json({ type: '*/*' }));
   
 
 
-// server setup -> getting express app talking to outside world
+// INITIAL SERVER SETUP -> getting express app talking to outside world
 // 1. define PORT server we'll run on on our local machine
   // if there's an env variable of port already defined use that otherwise use 3090
 const port = process.env.PORT || 3090
