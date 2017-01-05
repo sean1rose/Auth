@@ -1,4 +1,6 @@
 // main starting point of the application
+// mainly just initialization of our server. handle routes in different file
+
 const express = require('express');
 const http = require('http');
 const bodyParser = require('body-parser');
@@ -6,8 +8,12 @@ const morgan = require('morgan');
 // create instance of express App
 const app = express();
 
+// import exported router
+const router = require('./router');
+// going to call router, passing in app as an argument (look below)
 
-// app setup -> getting express working
+
+// APP SETUP -> getting express working + middleware
 // boilerplate musthaves know rhyme or reason:
 // tell app to use morgan -> morgan is a logging framework (logs incoming requests, used for debugging)
 app.use(morgan('combined'));
@@ -15,6 +21,8 @@ app.use(morgan('combined'));
   // any incoming request will be passed into both 1st
 // bodyparser is used to parse incoming requests into json (no matter the request type)
 app.use(bodyParser.json({ type: '*/*' }));
+// router is imported from separate file (route handler)
+router(app);
   
 
 
@@ -28,3 +36,6 @@ const server = http.createServer(app)
 // tell server to listen to our port
 server.listen(port);
 console.log('server listening on -> ', port);
+
+
+// adding route handlers (that respond w/ data) outside of index.js
