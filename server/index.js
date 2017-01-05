@@ -12,6 +12,11 @@ const app = express();
 const router = require('./router');
 // going to call router, passing in app as an argument (look below)
 
+const mongoose = require('mongoose');
+// DB Setup - tell mongoose to hook up to instance of mongodb
+mongoose.connect('mongodb://localhost:auth/auth');
+// creates a new db inside of mongodb called auth
+
 
 // APP SETUP -> getting express working + middleware
 // boilerplate musthaves know rhyme or reason:
