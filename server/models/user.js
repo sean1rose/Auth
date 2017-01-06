@@ -1,9 +1,11 @@
 // local definition of a user data model - email, password
 // instructions for mongoose to handle this data model
+// using bcrypt library here...
 
 const mongoose = require('mongoose');
 // schema helps define the particular fields that our model will have
 const Schema = mongoose.Schema;
+const bcrypt = require('bcrypt-nodejs'); 
 
 // 1. Define our Model schema
   // create a schema
@@ -14,6 +16,20 @@ const userSchema = new Schema({
   password: String
 });
 
+// on save hook, encrypt password
+userSchema.pre('save', function(next) {
+  const user = this;
+  bcrypt.genSalt(10, function(err, salt) {
+  if (err) { return next(err); }
+
+  bcrypt.hash(user.password, salt, null, function(err, hash) {
+    if (err) { return next(err); }
+
+    user.password = hash;
+    next();
+  })
+  });
+});
 
 // 2. Create the model class by using mongoose
   // used to create new users
