@@ -1,15 +1,43 @@
 // ***Authentication Controller - 
 // PURPOSE: Handling the post request of user signup -> either user already exists or save user to DB**
-  // this is where any request is gonna be piped to w/ a post request to signup route
+
+/* STEPS for creating signup route:
+1. grab request body info (json format - email and password are sent in the request by the client side)
+2. make sure body has both requisite properties (email and pw)
+3. check to see if email/user already exists in the db
+  // -> if exists already -> send response back saying so
+  // -> if doesn't exist -> step 4...
+4. create a new user, based on imported mongoose model (schema requires email and pw)
+5. save that user and [send response back to client saying successful save]
+  ***IMPORTANT: want to send back a response with a JSON WEB TOKEN (AUTH TOKEN)
+6. create a JWT (token) (to send back as response upon successful save)
+  // to create a token, create a function that takes user id and encodes it w/ secret string (tokenForUser)
+7. send that JWT as response upon successful post signup request (successful being that the unique user saved to DB)
+*/
+
+
 
 // router defines the route user can visit -> upon hitting signup route and posting -> execute Authentication function, which sends back a json response (res.send)
 // logic to process a request
 
 const User = require('../models/user');
 // mongoose user model
+// import config secret string and jwt library
+const jwt = require('jwt-simple');
+const config = require('../config');
 
+// func to create a JWT token (takes in user model as an arg)
+function tokenForUser(user) {
+  // used for iat
+  const timestamp = new Date().getTime();
 
-// ***GOAL: read in a user if one is passed via signup post request, check to see if user w/ that email already exists, then save the record and respond w/ a success response
+  // use user id mixed w/ secret in order to encode and produce jwt (don't use email, which could change) 
+  // JWT's have a 'sub' property -> 'subject' is the specific user
+  // 'iat' -> issued at time
+  return jwt.encode({ sub: user.id, iat: timestamp }, config.secret);
+}
+
+// ***GOAL: enter in a user into db if one is passed via signup post request, check to see if user w/ that email already exists, then save the record and respond w/ a success response
 // THIS IS THE SIGNUP ROUTE
 exports.signup = function(req, res, next) {
   // 0. pull out info from request object (which should have email and pw data) of a post request
@@ -31,7 +59,7 @@ exports.signup = function(req, res, next) {
   }
 
 
-  // 1. See if user w/ given email exists
+  // 1. See if user w/ given email exists (using 'findOne' method)
     // need to check thru db records and see if that email exists (if so -> throw error)
     // need ability to check our db records
     // use mongoose user model ('User' is 'User class') w/ method findOne, which checks for email property then calls callback
@@ -47,18 +75,19 @@ exports.signup = function(req, res, next) {
       }
 
       // 3. if user w/ email does NOT exist -> create AND save user record (to create new user -> call 'new' keyword on 'User' class)
-      // create new user (in memory) (This is just the CREATing part)
+      // create new user (in memory) (This is  the CREATing part)
+      // create a user by using the imported USER MODEL (which is based on a mongoose schema)
       const user = new User({
         email: email,
         password: password
       });
       
-      // SAVE the user record to DB (this is the SAVE part)
+      // SAVE the user record to MONGODB (this is the SAVE part)
       user.save(function(err) {
         if (err) { return next(err); }
         
-        // 4. respond to request indicating that the user was created (sending back response success true)
-      res.json({ success: true });
+        // respond to successful user save w/ JWT
+      res.json({ token: tokenForUser(user) });
       });
 
     });
