@@ -1,4 +1,5 @@
-// ***Authentication Controller - Handling the post request of user signup -> either user already exists or save user to DB**
+// ***Authentication Controller - 
+// PURPOSE: Handling the post request of user signup -> either user already exists or save user to DB**
   // this is where any request is gonna be piped to w/ a post request to signup route
 
 // router defines the route user can visit -> upon hitting signup route and posting -> execute Authentication function, which sends back a json response (res.send)
@@ -16,9 +17,19 @@ exports.signup = function(req, res, next) {
     // so need to send email and pw in the body of the post request
   const email = req.body.email;
   const password = req.body.password;
-  console.log('rb - ', req.body);
+  
+  // ^ ***NOTE: NEVER want to save password as Plain Text -> want to store an encrypted password***
+  // ***IMPORTANT***
+  // use bcrypt to encrypt password!!!
 
-  // ^ router provides us w/ posted in user (w/ email + pw) -> 
+  console.log('rb - ', req.body);
+  // ^ router provides us w/ post-submitted user (w/ email + pw) -> 
+
+  // want to also ensure that user submits both an email and password (backend validation)
+  if (!email || !password) {
+    return res.status(422).send({ error: 'You must provide an email AND password' });
+  }
+
 
   // 1. See if user w/ given email exists
     // need to check thru db records and see if that email exists (if so -> throw error)
@@ -35,13 +46,14 @@ exports.signup = function(req, res, next) {
         return res.status(422).send({ error: 'Email is in use' });
       }
 
-      // 3. if user w/ email does NOT exist -> create and save user record (to create new user -> call 'new' keyword on 'User' class)
-      // create new user (in memory)
+      // 3. if user w/ email does NOT exist -> create AND save user record (to create new user -> call 'new' keyword on 'User' class)
+      // create new user (in memory) (This is just the CREATing part)
       const user = new User({
         email: email,
         password: password
       });
-      // SAVE the user record to DB
+      
+      // SAVE the user record to DB (this is the SAVE part)
       user.save(function(err) {
         if (err) { return next(err); }
         
