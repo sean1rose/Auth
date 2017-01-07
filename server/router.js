@@ -14,6 +14,12 @@ const passport = require('passport');
 const requireAuth = passport.authenticate('jwt', { session: false });
 // ^ use this in route handler before running callback function (see example below)
 
+
+// 2nd helper to determine if user provided correct username + pw (another form of middleware to authenticate)
+// this is used on signin route
+const requireSignin = passport.authenticate('local', { session: false});
+
+
 // to export code in node.js enviornment use module.exports
 // define routes that user can visit
 module.exports = function(app) {
@@ -24,11 +30,14 @@ module.exports = function(app) {
     res.send({ hi: 'there' });
   })
   
+  // b4 user can go to signin route handler, must pass thru middleware and be authenticated 1st...
+  app.post('/signin', requireSignin, Authentication.sigin)
+
   // route handler for our signup route (POST REQUEST of username and pw to signup)
   app.post('/signup', Authentication.signup);
     // ^ sending to authentication controller (which should provide a json request)
     // Auth.signup function checks to see if user already exists in db, and if not saves user to db (also creating JWT to pass back to user in response)
-  
+
 }
 
 

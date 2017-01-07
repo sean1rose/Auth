@@ -8,11 +8,30 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const LocalStrategy = require('passport-local');
 // 4th EXTRA step -> SIGNIN PROCESS (LOCAL STRATEGY)
 
-// create local strategy
+// 4. create local strategy
 const localOptions = { usernameField: 'email'};
   // telling strategy to look for email in place of username ^^^ 
   // need to tell local strategy where in the request to look for email/username
-const localLogin = new LocalStrategy(localOptions, function(email, password, done) {
+const localLogin = new LocalStrategy(localOptions, function(email, password, done) { // this 'password' is pw from the request
+  // find user -> compare passwords
+  User.findOne({ email: email }, function(err, user) { // user is retrieved user from db w/ matching email
+    // if error in the search process...
+    if (err) { return done(err); } 
+    // if user was not found (user thinks he has an account, but really don't)...
+    if (!user) { return done(null, false); }
+    
+    // *compare passwords - is 'password' of the request === 'user.password' that was retrieved by findOne method (but remember we have a hashed pw)[remember bcrypt diagram][lecture: https://www.udemy.com/react-redux-tutorial/learn/v4/t/lecture/4755188]
+    user.comparePassword(password, function(err, isMatch) {
+    // 'user' found in db (w/ corresponding email) vs 'password' is the pw from request
+      if (err) { return done(err); }
+      if (!isMatch) {return done(null, false);}
+
+      // match!
+      return done(null, user)
+    });
+    
+
+  })
   // verify this username and pw,
   // if it is correct username and pw -> call done w/ the user
   // otherwise call done w/ false
@@ -60,3 +79,4 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
 
 // 3. Tell passport to use this strategy we just created (wire everything together)
 passport.use(jwtLogin);
+passport.use(localLogin);

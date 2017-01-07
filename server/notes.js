@@ -5,6 +5,7 @@ NOTES:
 
 
 A) ***SIGNUP PROCESS***
+(verify email is not in use -> grant token, they're now authenticated)***
 1. index.js -> initialize our server
 
 2. router.js -> to handle routes
@@ -29,6 +30,8 @@ A) ***SIGNUP PROCESS***
 -----------------------------------
 
 B) *** AUTHENTICATION MIDDLEWARE PROCESS: NEED TO VERIFY THAT A USER IS AUTHENTICATED WHEN VISITNG/ACCESSING A PROTECTED RESOURCE *****
+(verify TOKEN upon request -> grant resource access)***
+[USES JWT STRATEGY]
 -authentication layer
 -(this is the "Logged in?" box in the "auth middleware process diagram"")
 -did the user include a valid JWT w/ their request? -> in order to access protected resources (only want to do this on SOME routes)
@@ -62,12 +65,22 @@ B) *** AUTHENTICATION MIDDLEWARE PROCESS: NEED TO VERIFY THAT A USER IS AUTHENTI
 -----------------------------------
 
 C) *** SIGN IN /LOG IN PROCESS ***
-(need ability for user to exchange username + pw for token via signing in)
+(send us email/pw -> we verify email/pw are correct using local strategy -> grant TOKEN, they are considered authenticated)***
+[USES LOCAL STRATEGY]
+(need ability for user to provide username + pw IN EXCHANGE for token via signing in)
 -Using Local Strategy in parallel w/ JWT -> authenticates w/ email and pw
   -uses email and pw (locally stored)
-0. npm installl passport-local
-1. create sigin route in router.js
-
+0. npm install passport-local
+1. create local strategy in passport.js file
+  - need to tell it where in the request to look for email/pw
+  - find user in the DB that has matching email
+2. (sidestep) - users.js: create pw comparison function in our user model file using bcrypt
+3. compare submitted password w/ the password of the stored db user (who had the matching email address)
+  is 'password' (supplied by the request) === user.password (saved/retrieved pw)
+4. passport.js: tell passport to make use of this strategy (strategy is called localLogin -> so passport.use(localLogin))
+5. add route to routes.js for signin, but create middleware 1st before allow to hit routehandler
+  - want to verify before going to route by using our strategy as an interceptor method
+6. authentication.js: create route handler for signin 
 
 
 

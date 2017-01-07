@@ -37,6 +37,13 @@ function tokenForUser(user) {
   // ^ CREATING THE PAYLOAD using an encoded secret
 }
 
+// new route handler for signin
+exports.signin = function(req, res, next) {
+  // user has already had their email and pw auth'd
+  // just need to give them a token
+}
+
+
 // ***GOAL: enter in a user into db if one is passed via signup post request, check to see if user w/ that email already exists, then save the record and respond w/ a success response
 // THIS IS THE SIGNUP ROUTE
 exports.signup = function(req, res, next) {

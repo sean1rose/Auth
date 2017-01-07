@@ -48,6 +48,18 @@ userSchema.pre('save', function(next) {
   });
 });
 
+// candiate pw is pw submitted in request
+userSchema.methods.comparePassword = function(candidatePassword, callback) {
+  // this.password -> our hashed and salted pw stored and retrieved from db
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    // bcrypt does the comparison for us behind the scenes. If so -> isMatch will be true
+    if (err) { return callback(err); }
+
+    callback(null, isMatch);
+  })
+}
+
+
 // 2. CREATE THE MODEL CLASS USING MONGOOSE
   // used to create new users
 // loads the schema into mongoose, corresponds w/ collection 'user'
