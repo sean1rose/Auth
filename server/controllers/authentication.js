@@ -26,7 +26,7 @@ const User = require('../models/user');
 const jwt = require('jwt-simple');
 const config = require('../config');
 
-// func to create a JWT token (takes in user model as an arg)
+// func to CREATE A JWT token (takes in user model as an arg)
 function tokenForUser(user) {
   // used for iat
   const timestamp = new Date().getTime();
