@@ -5,13 +5,32 @@ const JwtStrategy = require('passport-jwt').Strategy;
 // going to set up this strategy ^ w/ a config obj
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
-// 3 Step Process:
+const LocalStrategy = require('passport-local');
+// 4th EXTRA step -> SIGNIN PROCESS (LOCAL STRATEGY)
 
-// 1. Set Up options for JWT Strategy
-const jwtOptions = {};
+// create local strategy
+const localOptions = { usernameField: 'email'};
+  // telling strategy to look for email in place of username ^^^ 
+  // need to tell local strategy where in the request to look for email/username
+const localLogin = new LocalStrategy(localOptions, function(email, password, done) {
+  // verify this username and pw,
+  // if it is correct username and pw -> call done w/ the user
+  // otherwise call done w/ false
+})
+
+// ***3 Step Process***
+// 1. Set Up options for JWT Strategy (2 parts)
+  // A) need to tell strategy where to look on the request to find the jwt token...
+    // whenever a request comes in and we want passport to handle it, look at, specifically, the 'authorization' request header
+  // B) tell the strategy the secret it needs to decode the token
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromHeader('auth'),
+  secretOrKey: config.secret
+};
+
 
 // 2. Create JWT strategy
-// 1st arg of JwtStrategy is the options obj, 2nd arg is func called whenever we need to auth a user w/ a jwt token
+// 1st arg of JwtStrategy is the options config obj created in step 1, 2nd arg is the VERIFY CALLBACK func called whenever we need to auth a user w/ a jwt token
 const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
   // payload -> decoded JWT token created in authentication.js' "tokenForUser" function (payload should have 'sub' property [user.id] and 'iat' property)
   // done -> callback called depending on whether or not user is successfully authenticated
@@ -20,11 +39,15 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
   // ***want to see if user ID in the payload exists in our db... (remember that we ecnoded user id as sub property on token)
     // *if so -> pass valid user to done callback -> user is authenticated and now has access
     // *if not -> call done w/o a user obj -> no auth
-    
+
+    console.log('payload.sub - ', payload.sub);
+
+
   // have user model, look thru all users for particular id (findById is a mongoose method), id is on our payload.sub property
+
   User.findById(payload.sub, function(err, user) {
     // serach failed to occur, so 1st arg is err (use null if search works)
-    if (err) { return done(err, false);}
+    if (err) { return done(err, false); }
     if (user) {
       // if found user -> call done w/o error + that user
       done(null, user);
@@ -35,5 +58,5 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
   });
 });
 
-// 3. Tell passport to use this strategy
-
+// 3. Tell passport to use this strategy we just created (wire everything together)
+passport.use(jwtLogin);

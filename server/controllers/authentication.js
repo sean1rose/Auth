@@ -28,13 +28,13 @@ const config = require('../config');
 
 // func to CREATE A JWT token (takes in user model as an arg)
 function tokenForUser(user) {
-  // used for iat
+  // timestamp used for iat
   const timestamp = new Date().getTime();
-
   // use user id mixed w/ secret in order to encode and produce jwt (don't use email, which could change) 
   // JWT's have a 'sub' property -> 'subject' is the specific user
   // 'iat' -> issued at time
   return jwt.encode({ sub: user.id, iat: timestamp }, config.secret);
+  // ^ CREATING THE PAYLOAD using an encoded secret
 }
 
 // ***GOAL: enter in a user into db if one is passed via signup post request, check to see if user w/ that email already exists, then save the record and respond w/ a success response

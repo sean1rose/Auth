@@ -12,7 +12,7 @@ A) ***SIGNUP PROCESS***
 
 3. user.js -> creates user model based on mongoose schema (used in authentication.js to save the user to db) [SEE STEPS IN USER.JS FILE]
 
-4. authentication.js -> handles SIGNUP post request and returns JWT token upon success [SEE STEPS IN AUTHENTICATION.JS FILE]
+4. authentication.js -> handles SIGNUP post request (which happens in router.js) and returns JWT token upon success [SEE STEPS IN AUTHENTICATION.JS FILE]
   -checks to see if user in request already exists, if not -> saves user to db 
   -(also encrypt password)
   -if successful -> want to pass back the user a JSON Web Token (JWT), which they can then use in the future to make authenticated requests
@@ -45,16 +45,28 @@ B) *** AUTHENTICATION MIDDLEWARE PROCESS: NEED TO VERIFY THAT A USER IS AUTHENTI
   #2: verify user w/ a username and pw
 
 ****3 STEP PROCESS in passport.js file***
-  1. set up config options for JWT strategy
+  1. set up config options for JWT strategy (jwtOptions)
+    // need to tell strategy where in the request to find the jwt token
+    // tell strategy the secret to decode the token
   2. create a jwt strategy
-    // pass it a callback that looks for userId contained w/in the token
-  3. tell passport to use this strategy
+    // pass it a VERIFY CALLBACK that looks for userId contained w/in the token
+  3. tell passport to use this strategy we created in step 2
+
+
+*** WIRING UP PASSPORT so that user can make authenticated requests for each request (before being passed to route handler) [see passport strategy diagram][lecture 79: https://www.udemy.com/react-redux-tutorial/learn/v4/t/lecture/4755182] ***
+-> happens in ROUTER.JS file
+  1. create Passport middleware object (using passport.authenticate('jwt', {session: false}))
+  2. add that middleware obj to the route 'get' route before it reaches the handler (b/w get-request and the callback-handler)
 
 
 -----------------------------------
 
 C) *** SIGN IN /LOG IN PROCESS ***
 (need ability for user to exchange username + pw for token via signing in)
+-Using Local Strategy in parallel w/ JWT -> authenticates w/ email and pw
+  -uses email and pw (locally stored)
+0. npm installl passport-local
+1. create sigin route in router.js
 
 
 
