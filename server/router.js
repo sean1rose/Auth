@@ -15,7 +15,8 @@ const requireAuth = passport.authenticate('jwt', { session: false });
 // ^ use this in route handler before running callback function (see example below)
 
 
-// 2nd helper to determine if user provided correct username + pw (another form of middleware to authenticate)
+// 2nd helper to determine if user provided correct username + pw (another form of middleware to authenticate);
+// this is the local strategy creaeted in passport.js
 // this is used on signin route
 const requireSignin = passport.authenticate('local', { session: false});
 
@@ -30,8 +31,8 @@ module.exports = function(app) {
     res.send({ hi: 'there' });
   })
   
-  // b4 user can go to signin route handler, must pass thru middleware and be authenticated 1st...
-  app.post('/signin', requireSignin, Authentication.sigin)
+  // b4 user can go to signin route handler, must pass thru middleware and be authenticated 1st (verify that they supplied correct username and pw using localstrategy that we created)...
+  app.post('/signin', requireSignin, Authentication.signin)
 
   // route handler for our signup route (POST REQUEST of username and pw to signup)
   app.post('/signup', Authentication.signup);

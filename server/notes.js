@@ -74,13 +74,14 @@ C) *** SIGN IN /LOG IN PROCESS ***
 1. create local strategy in passport.js file
   - need to tell it where in the request to look for email/pw
   - find user in the DB that has matching email
-2. (sidestep) - users.js: create pw comparison function in our user model file using bcrypt
-3. compare submitted password w/ the password of the stored db user (who had the matching email address)
+  -(sidestep) - users.js: create pw comparison function in our user model file using bcrypt
+  -compare submitted password w/ the password of the stored db user (who had the matching email address)
   is 'password' (supplied by the request) === user.password (saved/retrieved pw)
-4. passport.js: tell passport to make use of this strategy (strategy is called localLogin -> so passport.use(localLogin))
-5. add route to routes.js for signin, but create middleware 1st before allow to hit routehandler
-  - want to verify before going to route by using our strategy as an interceptor method
-6. authentication.js: create route handler for signin 
+2. passport.js: tell passport to make use of this ^ local strategy (strategy is called localLogin -> so passport.use(localLogin))
+3. add route to routes.js for signin, but create middleware 1st that uses above created local strategy before allow to hit routehandler (middleware === 'requireSignin' function)
+  - want to verify before going to route by using our local strategy as an interceptor method
+4. authentication.js: create route handler for signin (exports.signin)
+  - this is what is called after user successfully passes localstrategy signin middleware
 
 
 

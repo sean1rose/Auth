@@ -11,9 +11,13 @@ const LocalStrategy = require('passport-local');
 // 4. create local strategy
 const localOptions = { usernameField: 'email'};
   // telling strategy to look for email in place of username ^^^ 
+
+// created localStrategy above ^, then save below as localLogin...
+
   // need to tell local strategy where in the request to look for email/username
 const localLogin = new LocalStrategy(localOptions, function(email, password, done) { // this 'password' is pw from the request
-  // find user -> compare passwords
+  
+  // find existing user in db -> compare password supplied by request w/ user's saved pw, if same -> call passport callback w/ user model
   User.findOne({ email: email }, function(err, user) { // user is retrieved user from db w/ matching email
     // if error in the search process...
     if (err) { return done(err); } 
@@ -24,18 +28,19 @@ const localLogin = new LocalStrategy(localOptions, function(email, password, don
     user.comparePassword(password, function(err, isMatch) {
     // 'user' found in db (w/ corresponding email) vs 'password' is the pw from request
       if (err) { return done(err); }
+      // if no match -> did not find user
       if (!isMatch) {return done(null, false);}
 
       // match!
-      return done(null, user)
+      return done(null, user);
     });
     
 
-  })
+  });
   // verify this username and pw,
   // if it is correct username and pw -> call done w/ the user
   // otherwise call done w/ false
-})
+});
 
 // ***3 Step Process***
 // 1. Set Up options for JWT Strategy (2 parts)

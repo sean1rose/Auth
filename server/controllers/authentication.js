@@ -37,10 +37,14 @@ function tokenForUser(user) {
   // ^ CREATING THE PAYLOAD using an encoded secret
 }
 
+
 // new route handler for signin
+// PURPOSE: provide token
 exports.signin = function(req, res, next) {
-  // user has already had their email and pw auth'd
+  // user has already had their email and pw auth'd (they've successfully passed thru the middleware)
   // just need to give them a token
+  // done callback provvided by localStrategy (in passport.js) assings user to req.user in this file
+  res.send({ token: tokenForUser(req.user) });
 }
 
 
