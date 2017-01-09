@@ -1,6 +1,7 @@
 const passport = require('passport');
 const User = require('../models/user');
 const config = require('../config');
+// JWT strategy is for auth'd requests
 const JwtStrategy = require('passport-jwt').Strategy;
 // going to set up this strategy ^ w/ a config obj
 const ExtractJwt = require('passport-jwt').ExtractJwt;
@@ -8,7 +9,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const LocalStrategy = require('passport-local');
 // 4th EXTRA step -> SIGNIN PROCESS (LOCAL STRATEGY)
 
-// 4. create local strategy
+// 4. create local strategy (THIS BECOMES THE 'requireAuth' middleware in the router.js)
 const localOptions = { usernameField: 'email'};
   // telling strategy to look for email in place of username ^^^ 
 
@@ -43,6 +44,15 @@ const localLogin = new LocalStrategy(localOptions, function(email, password, don
   // if it is correct username and pw -> call done w/ the user
   // otherwise call done w/ false
 });
+
+
+
+// SIGN IN LOCAL STRATEGY is ABOVE ^^^
+
+// -----------------------------
+
+// JWT STRATEGY for AUTH'D REQUESTS is BELOW...
+
 
 // ***3 Step Process***
 // 1. Set Up options for JWT Strategy (2 parts)
@@ -85,5 +95,8 @@ const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
 });
 
 // 3. Tell passport to use this strategy we just created (wire everything together)
+// jwtLogin is for auth'd request (jwt strategy)
 passport.use(jwtLogin);
+
+// localLogin is for local strategy (signin in)
 passport.use(localLogin);

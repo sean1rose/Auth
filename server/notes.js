@@ -4,6 +4,15 @@ NOTES:
 // using postman, mongodb and robomongo apps to help test/create the backend
 
 
+3 possible flows:
+1. signing up (a) : verify that email not already in use -> then give user a JWT token (created using user id)
+2. sign in (c) : user supplies email/pw to login -> we verify using passport local strategy -> then assign token
+3. authorized request (b) : if user tries to make an auth'd request -> verify the token correct using JWT passport strategy -> then provide access to the protected resource
+
+// if ever want to provide a protected route in the future -> just use the 'requireAuth' middleware as the 2nd argument in app.get; 3rd argument is whatever the protected route is
+
+-----------------------------------
+
 A) ***SIGNUP PROCESS***
 (verify email is not in use -> grant token, they're now authenticated)***
 1. index.js -> initialize our server
@@ -29,7 +38,8 @@ A) ***SIGNUP PROCESS***
 
 -----------------------------------
 
-B) *** AUTHENTICATION MIDDLEWARE PROCESS: NEED TO VERIFY THAT A USER IS AUTHENTICATED WHEN VISITNG/ACCESSING A PROTECTED RESOURCE *****
+B) *** AUTHENTICATION REQUEST:  MIDDLEWARE PROCESS: NEED TO VERIFY THAT A USER IS AUTHENTICATED WHEN VISITNG/ACCESSING A PROTECTED RESOURCE *****
+(THIS CREATES THE 'requireAuth' middleware, and can thus create any protected route for guarded resources in the future)
 (verify TOKEN upon request -> grant resource access)***
 [USES JWT STRATEGY]
 -authentication layer
