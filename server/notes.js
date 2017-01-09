@@ -71,7 +71,7 @@ C) *** SIGN IN /LOG IN PROCESS ***
 -Using Local Strategy in parallel w/ JWT -> authenticates w/ email and pw
   -uses email and pw (locally stored)
 0. npm install passport-local
-1. create local strategy in passport.js file
+1. create local strategy in passport.js file - this serves as middleware that keeps users out if they haven't signed IN w/ correct user/pw
   - need to tell it where in the request to look for email/pw
   - find user in the DB that has matching email
   -(sidestep) - users.js: create pw comparison function in our user model file using bcrypt

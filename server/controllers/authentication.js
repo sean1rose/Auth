@@ -43,7 +43,8 @@ function tokenForUser(user) {
 exports.signin = function(req, res, next) {
   // user has already had their email and pw auth'd (they've successfully passed thru the middleware)
   // just need to give them a token
-  // done callback provvided by localStrategy (in passport.js) assings user to req.user in this file
+  // need to get access to current user model so can give them a token 
+  // done callback provvided by localStrategy (in passport.js) assigns user to req.user in this file (req.user is our user obj)
   res.send({ token: tokenForUser(req.user) });
 }
 

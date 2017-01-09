@@ -17,8 +17,10 @@ const localOptions = { usernameField: 'email'};
   // need to tell local strategy where in the request to look for email/username
 const localLogin = new LocalStrategy(localOptions, function(email, password, done) { // this 'password' is pw from the request
   
+  
   // find existing user in db -> compare password supplied by request w/ user's saved pw, if same -> call passport callback w/ user model
-  User.findOne({ email: email }, function(err, user) { // user is retrieved user from db w/ matching email
+    // NOTE: convert email to lower case string for mongoose to check if an email exists. (CASE SENSITIVE)
+  User.findOne({ email: email.toLowerCase() }, function(err, user) { // user is retrieved user from db w/ matching email
     // if error in the search process...
     if (err) { return done(err); } 
     // if user was not found (user thinks he has an account, but really don't)...
